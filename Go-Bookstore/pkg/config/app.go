@@ -10,7 +10,18 @@ var (
 )
 
 func Connect() {
-	d, err := gorm.Open("mysql", "root:sebas1912/goproject?charset=utf8&parseTime=true&loc=Local")
+	// First, connect without specifying a database to create it if it doesn't exist
+	d, err := gorm.Open("mysql", "root:sebas1912@tcp(localhost:3306)/?charset=utf8&parseTime=true&loc=Local")
+	if err != nil {
+		panic(err)
+	}
+
+	// Create database if it doesn't exist
+	d.Exec("CREATE DATABASE IF NOT EXISTS goproject")
+	d.Close()
+
+	// Now connect to the specific database
+	d, err = gorm.Open("mysql", "root:sebas1912@tcp(localhost:3306)/goproject?charset=utf8&parseTime=true&loc=Local")
 	if err != nil {
 		panic(err)
 	}
